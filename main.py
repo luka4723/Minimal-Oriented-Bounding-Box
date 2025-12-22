@@ -7,7 +7,11 @@ import convex
 import sweep
 from sweep import check_new
 
+
+
 pygame.init()
+
+t1,t2,t3,t4 = None,None,None,None
 
 WIDTH, HEIGHT = 800, 600
 PADDING = 10
@@ -26,7 +30,7 @@ finished = False
 clock = pygame.time.Clock()
 
 points = []
-segments = sweep.SortedList()
+segments = []
 seg_it = 0
 
 bottom = pygame.Rect(0, HEIGHT-60, WIDTH, 60)
@@ -78,13 +82,13 @@ while running:
                         seg = sweep.segment((points[-1]), (x,y))
                         if check_new(new=seg,olds=segments):
                             points.append((x, y))
-                            segments.add(seg)
+                            segments.append(seg)
                 elif connect_button.collidepoint(x, y) and len(points) > 2:
                     seg = sweep.segment((points[-1]), points[0])
                     if check_new(new=seg, olds=segments):
                         finished = True
                         points.append(points[0])
-                        segments.add(seg)
+                        segments.append(seg)
                         col1, col2 = red, green
                 elif undo_button.collidepoint(x, y) and len(points) > 0:
                     points.pop()
@@ -97,7 +101,8 @@ while running:
             elif next_button.collidepoint(x, y):
                 if len(hull_points)>0:
                     if not min_found:
-                        bounding_box = box.test(hull_segments[seg_it],hull_points)
+                        hull_points, hull_segments = sweep.ensure_ccw(hull_points,hull_segments)
+                        bounding_box = box.box2(hull_segments[seg_it], hull_points,hull_segments,seg_it)
                         width  = math.sqrt((bounding_box[1][0]-bounding_box[0][0])**2+(bounding_box[1][1]-bounding_box[0][1])**2)
                         height = math.sqrt((bounding_box[2][0]-bounding_box[1][0])**2+(bounding_box[2][1]-bounding_box[1][1])**2)
                         curr_surface = round(width * height)
@@ -106,7 +111,6 @@ while running:
                         cur_w, _ = font.size(text)
                         cur_text = font.render(text, True, (255, 255, 255))
 
-                        print(curr_surface,min_surf)
                         if curr_surface < min_surf:
                             min_box = bounding_box
                             min_index = seg_it
@@ -121,6 +125,11 @@ while running:
                             min_found = True
                     else:
                         bounding_box = min_box
+
+                        text = "Cur surf: " + str(min_surf)
+                        cur_w, _ = font.size(text)
+                        cur_text = font.render(text, True, (255, 255, 255))
+
                         min_found2 = True
                         col2 = red
                 else:
@@ -138,17 +147,6 @@ while running:
         col4 = red
 
     screen.fill((10, 10, 10))
-    pygame.draw.rect(screen, (100,100,100), bottom)
-    pygame.draw.rect(screen, col1, connect_button)
-    pygame.draw.rect(screen, col2, next_button)
-    pygame.draw.rect(screen, col3, undo_button)
-    pygame.draw.rect(screen, col4, clear_button)
-    screen.blit(connect_text, (connect_button.x+PADDING, connect_button.y+PADDING))
-    screen.blit(next_text, (next_button.x+PADDING, next_button.y+PADDING))
-    screen.blit(undo_text, (undo_button.x+PADDING, undo_button.y+PADDING))
-    screen.blit(clear_text, (clear_button.x+PADDING, clear_button.y+PADDING))
-    screen.blit(res_text,(WIDTH-PADDING-res_w,bottom[1]+2*PADDING))
-    screen.blit(cur_text,(WIDTH-PADDING-cur_w-res_w-PADDING,bottom[1]+2*PADDING))
 
     if len(points) > 2:
         closing_line = sweep.segment(points[0], points[-1])
@@ -167,9 +165,15 @@ while running:
 
         for p in hull_points:
             pygame.draw.circle(screen, (0, 0, 255), p, 4)
+        # if t1 is not None:
+        #     pygame.draw.circle(screen, (255, 0, 0), t1, 4)
+        #     pygame.draw.circle(screen, (255, 255, 0), t2, 4)
+        #     pygame.draw.circle(screen, (0, 255, 255), t3, 4)
+        #     pygame.draw.circle(screen, (255, 0, 255), t4, 4)
 
         pygame.draw.lines(screen, (0, 0, 255), False, hull_points, 2)
         pygame.draw.lines(screen, (0, 0, 255), False, (hull_points[0],hull_points[-1]), 2)
+
 
     else:
         for p in points:
@@ -178,6 +182,17 @@ while running:
         if len(points) > 1:
             pygame.draw.lines(screen, (255, 255, 255), False, points, 2)
 
+    pygame.draw.rect(screen, (100, 100, 100), bottom)
+    pygame.draw.rect(screen, col1, connect_button)
+    pygame.draw.rect(screen, col2, next_button)
+    pygame.draw.rect(screen, col3, undo_button)
+    pygame.draw.rect(screen, col4, clear_button)
+    screen.blit(connect_text, (connect_button.x + PADDING, connect_button.y + PADDING))
+    screen.blit(next_text, (next_button.x + PADDING, next_button.y + PADDING))
+    screen.blit(undo_text, (undo_button.x + PADDING, undo_button.y + PADDING))
+    screen.blit(clear_text, (clear_button.x + PADDING, clear_button.y + PADDING))
+    screen.blit(res_text, (WIDTH - PADDING - res_w, bottom[1] + 2 * PADDING))
+    screen.blit(cur_text, (WIDTH - PADDING - cur_w - res_w - PADDING, bottom[1] + 2 * PADDING))
 
 
     pygame.display.flip()
