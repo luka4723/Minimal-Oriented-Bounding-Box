@@ -1,6 +1,4 @@
 import math
-from pstats import add_callers
-
 
 def box(seg, points):
     angle = math.atan2(seg[1][1] - seg[0][1], seg[1][0] - seg[0][0])
@@ -68,11 +66,11 @@ def dot(v1, v2):
 def minus(v1, v2):
     return v1[0] - v2[0], v1[1] - v2[1]
 
-def box2(seg,points,segments,seg_it):
+def box2(seg,points):
     k1 = math.atan2(seg[1][1] - seg[0][1], seg[1][0] - seg[0][0])
     vec1 =  [math.cos(k1),math.sin(k1)]
     vec2 =  [-vec1[1],vec1[0]]
-    points[seg_it] = points[seg_it][0] + 0.001*vec1[0],points[seg_it][1] + 0.001*vec1[1]
+    #points[seg_it] = points[seg_it][0] + 0.001*vec1[0],points[seg_it][1] + 0.001*vec1[1]
 
     def extreme_points(vec, pts):
         a = 0
@@ -87,7 +85,7 @@ def box2(seg,points,segments,seg_it):
 
         while True:
             if a<b:
-                c = (a+b)//2
+                c = (a+b+1)//2
             else:
                 c = ((b+a+n)//2)%n
 
@@ -120,7 +118,7 @@ def box2(seg,points,segments,seg_it):
                 else:
                     a = c
 
-    points[seg_it] = points[seg_it][0] - 0.001 * vec1[0], points[seg_it][1] - 0.001 * vec1[1]
+    #points[seg_it] = points[seg_it][0] - 0.001 * vec1[0], points[seg_it][1] - 0.001 * vec1[1]
     p1,p2,p3,p4 = extreme_points(vec1, points),extreme_points(vec2, points),extreme_points([-vec1[0], -vec1[1]],points),extreme_points([-vec2[0], -vec2[1]],points)
 
     maxx = dot(p1, vec1)

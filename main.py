@@ -102,7 +102,8 @@ while running:
                 if len(hull_points)>0:
                     if not min_found:
                         hull_points, hull_segments = sweep.ensure_ccw(hull_points,hull_segments)
-                        bounding_box = box.box2(hull_segments[seg_it], hull_points,hull_segments,seg_it)
+                        # bounding_box = box.box(hull_segments[seg_it], hull_points)
+                        bounding_box = box.box2(hull_segments[seg_it], hull_points)
                         width  = math.sqrt((bounding_box[1][0]-bounding_box[0][0])**2+(bounding_box[1][1]-bounding_box[0][1])**2)
                         height = math.sqrt((bounding_box[2][0]-bounding_box[1][0])**2+(bounding_box[2][1]-bounding_box[1][1])**2)
                         curr_surface = round(width * height)
