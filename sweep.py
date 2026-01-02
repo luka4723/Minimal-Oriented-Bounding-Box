@@ -10,7 +10,8 @@ class segment:
             self.p1, self.p2 = p2, p1
         else:
             self.p1, self.p2 = p1, p2
-def ensure_ccw(pts,segments):
+
+def make_ccw(pts,segments):
     n = len(pts)
     area = 0
     for i in range(n):

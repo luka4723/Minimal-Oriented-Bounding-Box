@@ -33,33 +33,6 @@ def box(seg, points):
     box = [lb, rb, rt, lt]
     return box
 
-
-def is_convex(points):
-    n = len(points)
-    sign = None
-    for i in range(n):
-        p1 = points[i]
-        p2 = points[(i + 1) % n]
-        p3 = points[(i + 2) % n]
-
-        cross = (p2[0] - p1[0]) * (p3[1] - p1[1]) - (p2[1] - p1[1]) * (p3[0] - p1[0])
-
-        if abs(cross) < 1e-10:
-            continue
-
-        if sign is None:
-            sign = cross > 0
-        elif (cross > 0) != sign:
-            return False
-    return True
-def is_ccw(points):
-    area = 0
-    n = len(points)
-    for i in range(n):
-        j = (i + 1) % n
-        area += points[i][0] * points[j][1]
-        area -= points[j][0] * points[i][1]
-    return area > 0
 def dot(v1, v2):
     return v1[0] * v2[0] + v1[1] * v2[1]
 
