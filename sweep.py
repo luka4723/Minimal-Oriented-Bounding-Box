@@ -10,6 +10,10 @@ class segment:
             self.p1, self.p2 = p2, p1
         else:
             self.p1, self.p2 = p1, p2
+    def __str__(self):
+        return f"({self.p1[0]},{self.p1[1]},{self.p2[0]},{self.p2[1]})"
+    def __repr__(self):
+        return self.__str__()
 
 def make_ccw(pts,segments):
     n = len(pts)
