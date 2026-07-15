@@ -1,4 +1,4 @@
-# Minimum Oriented Bounding Box Solver
+# Minimal Oriented Bounding Box Solver
 
 An interactive Python application designed to compute and visualize the minimum-area Oriented Bounding Box (OBB) for custom simple polygons. The project implements classical computational geometry algorithms, achieving an optimal $O(n \log n)$ time complexity.
 
