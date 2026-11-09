@@ -39,28 +39,26 @@ def dot(v1, v2):
 def minus(v1, v2):
     return v1[0] - v2[0], v1[1] - v2[1]
 
+def sign(x):
+    return (x > 0) - (x < 0)
+
 def box2(seg,points):
     k1 = math.atan2(seg[1][1] - seg[0][1], seg[1][0] - seg[0][0])
     vec1 =  [math.cos(k1),math.sin(k1)]
     vec2 =  [-vec1[1],vec1[0]]
-    #points[seg_it] = points[seg_it][0] + 0.001*vec1[0],points[seg_it][1] + 0.001*vec1[1]
 
     def extreme_points(vec, pts):
+        #binary search for the maximum projection on a convex polygon, O(log n) (based on extrVertex from KACTL)
         a = 0
-        b = len(pts) - 1
+        b = len(pts)
         n = len(pts)
 
-        if dot(vec, pts[a])>=dot(vec, pts[(a-1+n)%n]) and dot(vec, pts[a])>= dot(vec, pts[(a + 1) % n]):
+        a_val = dot(vec, pts[a])
+        if dot(vec, pts[(a+1)%n])<=a_val and a_val>dot(vec, pts[(a-1+n)%n]):
             return pts[a]
 
-        if dot(vec, pts[b]) >= dot(vec, pts[(b - 1 + n) % n]) and dot(vec, pts[b]) >= dot(vec, pts[(b + 1) % n]):
-            return pts[b]
-
-        while True:
-            if a<b:
-                c = (a+b+1)//2
-            else:
-                c = ((b+a+n)//2)%n
+        while a+1<b:
+            c = (a+b)//2
 
             iprev = (c - 1 + n) % n
             inxt = (c + 1) % n
@@ -71,27 +69,17 @@ def box2(seg,points):
             a_val = dot(vec,pts[a])
             nxt_a = dot(vec,pts[(a+1)%n])
 
-            if mid >= prev and mid >= nxt:
+            if nxt <= mid and mid > prev:
                 return pts[c]
 
-            if nxt_a>a_val and nxt<mid:
+            a_dir = sign(nxt_a-a_val)
+            c_dir = sign(nxt-mid)
+            if a_dir>c_dir or (a_dir==c_dir and a_dir==sign(a_val-mid)):
                 b = c
-
-            elif nxt_a<a_val and nxt>mid:
-                a = c
-
-            elif nxt_a>a_val  and nxt>mid:
-                if a_val>mid:
-                    b = c
-                else:
-                    a = c
             else:
-                if a_val<mid:
-                    b = c
-                else:
-                    a = c
+                a = c
+        return pts[a]
 
-    #points[seg_it] = points[seg_it][0] - 0.001 * vec1[0], points[seg_it][1] - 0.001 * vec1[1]
     p1,p2,p3,p4 = extreme_points(vec1, points),extreme_points(vec2, points),extreme_points([-vec1[0], -vec1[1]],points),extreme_points([-vec2[0], -vec2[1]],points)
 
     maxx = dot(p1, vec1)
@@ -104,4 +92,3 @@ def box2(seg,points):
     rb = (maxx * vec1[0] + miny * vec2[0], maxx * vec1[1] + miny * vec2[1])
     rt = (maxx * vec1[0] + maxy * vec2[0], maxx * vec1[1] + maxy * vec2[1])
     return [lb, rb, rt, lt]
-

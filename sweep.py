@@ -1,4 +1,3 @@
-
 def ort(p, q, r):
     val = (q[1]-p[1])*(r[0]-q[0])- (q[0] - p[0]) * (r[1] - q[1])
     if val == 0: return 0
@@ -33,7 +32,10 @@ def intersect(A, B, C, D):
     detS = (B[0] - A[0]) * (C[1] - A[1]) - (B[1] - A[1]) * (C[0] - A[0])
 
     if det == 0:
-        return True
+        #parallel segments intersect only if they are on the same line and overlap
+        if detS != 0:
+            return None
+        return max(A, C) <= min(B, D)
 
     if 0 < detT / det < 1 and 0 < detS / det < 1:
         return True
