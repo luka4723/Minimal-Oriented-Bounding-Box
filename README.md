@@ -31,7 +31,7 @@ The Save and Load dialogs use Tkinter, which comes with most Python installation
 * **End drawing** closes the polygon. It is available (green) only when the closing edge, shown in red, does not cross the polygon.
 * **Next** first shows the convex hull, then the bounding box for one hull edge per click (*Cur surf* is its area in square pixels, *Min surf* the smallest area so far), and finally the minimum bounding box.
 * **Undo** removes the last vertex and **Clear** removes the polygon (while drawing).
-* **Load** (before drawing) and **Save** (after drawing) read and write a polygon as a text file. [`examples/polygon.txt`](examples/polygon.txt) is an example.
+* **Load** (before drawing) and **Save** (after drawing) read and write a polygon as a text file. [`test.txt`](test.txt) is an example polygon.
 * **Esc** quits.
 
 ## Files
